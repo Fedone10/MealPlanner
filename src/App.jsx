@@ -1,122 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from "react";
+import Onboarding from "./pages/Onboarding.jsx";
+import PianoPasti from "./pages/PianoPasti.jsx";
+import ListaSpesa from "./pages/ListaSpesa.jsx";
+import { generaPiano, rigeneraPasto } from "./utils/generaPiano.js";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  // Navigazione semplice tra le 3 pagine, senza React Router.
+  const [pagina, setPagina] = useState("onboarding");
+  const [preferenze, setPreferenze] = useState(null);
+  const [piano, setPiano] = useState(null);
+
+  // Fine onboarding: genera il piano e mostra la schermata risultato.
+  const completaOnboarding = (pref) => {
+    setPreferenze(pref);
+    setPiano(generaPiano(pref));
+    setPagina("piano");
+  };
+
+  // Rigenera un singolo pasto (icona 🔄 nella card).
+  const rigenera = (indiceGiorno, tipo) => {
+    setPiano((prec) =>
+      prec.map((g, i) => {
+        if (i !== indiceGiorno) return g;
+        const nuova = rigeneraPasto(preferenze, tipo, g[tipo]);
+        return { ...g, [tipo]: nuova };
+      })
+    );
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-shell">
+      {pagina === "onboarding" && (
+        <Onboarding onComplete={completaOnboarding} />
+      )}
 
-      <div className="ticks"></div>
+      {pagina === "piano" && preferenze && piano && (
+        <PianoPasti
+          preferenze={preferenze}
+          piano={piano}
+          onRigenera={rigenera}
+          onVaiSpesa={() => setPagina("spesa")}
+        />
+      )}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {pagina === "spesa" && preferenze && piano && (
+        <ListaSpesa
+          preferenze={preferenze}
+          piano={piano}
+          onIndietro={() => setPagina("piano")}
+        />
+      )}
+    </div>
+  );
 }
-
-export default App
