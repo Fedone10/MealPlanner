@@ -10,6 +10,7 @@ export const supermercati = [
   { id: "conad", nome: "Conad", colore: "#F39200", testo: "#FFFFFF" },
   { id: "carrefour", nome: "Carrefour", colore: "#004E9F", testo: "#FFFFFF" },
   { id: "bennet", nome: "Bennet", colore: "#3AAA35", testo: "#FFFFFF" },
+  { id: "famila", nome: "Famila", colore: "#D9261C", testo: "#FFFFFF" },
 ];
 
 // Permette di recuperare un supermercato dal suo id.
