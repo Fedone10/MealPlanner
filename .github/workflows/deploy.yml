@@ -38,6 +38,10 @@ jobs:
 
       - name: Configura Pages
         uses: actions/configure-pages@v5
+        with:
+          # Abilita automaticamente Pages in modalità "GitHub Actions"
+          # se non è ancora configurato così (evita lo step manuale nelle Settings).
+          enablement: true
 
       - name: Carica artefatto
         uses: actions/upload-pages-artifact@v3
